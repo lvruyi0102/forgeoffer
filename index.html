@@ -36,7 +36,6 @@
     <span class="badge">Project 2B · Asset #1</span>
     <h1>ForgeOffer</h1>
     <p class="sub">从零资本起步的第一个工具：把你已经会做的事，压成一份可以收钱的数字产品要约。不需要账号，计算全在浏览器完成。</p>
-
     <div class="grid">
       <div class="card">
         <label>你能给谁省下什么痛？</label>
@@ -59,7 +58,6 @@
         <p class="muted">填左侧后点击生成。输出会包含定价、标题、交付物清单和首条推文。</p>
       </div>
     </div>
-
     <footer>
       ForgeOffer v0 · 免费工具 · 还不收钱。收款通道尚未接入（需要主体实名账户）。<br/>
       下一步商品：可下载的《从零到第一单》要约模板包（$29 / ¥199）。
@@ -80,27 +78,20 @@ function gen(){
   const fmt = document.getElementById('fmt').value;
   const p = pick(fmt);
   const title = who + '的「第一份可售卖要约」';
-  const priceLine = p.priceRmb === 0 ? (免费 + Pro) : ('¥' + p.priceRmb + ' / $' + p.priceUsd);
+  const priceLine = p.priceRmb === 0 ? '免费 + Pro' : ('¥' + p.priceRmb + ' / $' + p.priceUsd);
   const tweet = '我把「' + pain.slice(0,40) + '」压成一份' + p.name + '，卖 ' + priceLine + '。目标用户：' + who + '。';
-  document.getElementById('out').innerHTML = `
-    <h2>${title}</h2>
-    <div class="price">${priceLine}</div>
-    <p class="muted">交付形式：${p.name}${p.note ? ' · ' + p.note : ''}</p>
-    <p><strong>痛点</strong>：${pain}</p>
-    <p><strong>你的凭什么</strong>：${asset}</p>
-    <p><strong>交付清单</strong></p>
-    <ul>
-      <li>1 页产品要约（标题 / 谁买 / 为什么现在 / 价格）</li>
-      <li>3 条销售文案（X / 小红书 / 小红圈）</li>
-      <li>999 元以下的首单支付清单</li>
-    </ul>
-    <p><strong>首条推文</strong></p>
-    <p>${tweet}</p>
-    <div class="row">
-      <button class="ghost" id="copy">复制要约</button>
-    </div>`;
+  document.getElementById('out').innerHTML =
+    '<h2>' + title + '</h2>' +
+    '<div class="price">' + priceLine + '</div>' +
+    '<p class="muted">交付形式：' + p.name + (p.note ? ' · ' + p.note : '') + '</p>' +
+    '<p><strong>痛点</strong>：' + pain + '</p>' +
+    '<p><strong>你的凭什么</strong>：' + asset + '</p>' +
+    '<p><strong>交付清单</strong></p>' +
+    '<ul><li>1 页产品要约（标题 / 谁买 / 为什么现在 / 价格）</li><li>3 条销售文案（X / 小红书 / 小红圈）</li><li>999 元以下的首单支付清单</li></ul>' +
+    '<p><strong>首条推文</strong></p><p>' + tweet + '</p>' +
+    '<div class="row"><button class="ghost" id="copy">复制要约</button></div>';
   const text = title + '\n' + priceLine + '\n' + tweet;
-  document.getElementById('copy').onclick = () => navigator.clipboard.writeText(text);
+  document.getElementById('copy').onclick = function(){ navigator.clipboard.writeText(text); };
 }
 document.getElementById('go').onclick = gen;
 </script>
