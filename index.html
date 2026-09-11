@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ForgeOffer — 60 秒生成可售卖的数字产品要约</title>
+<meta name="description" content="从零资本开始：输入你会的事，得到定价、文案与交付清单。" />
+<style>
+  :root { --bg:#0b0d10; --card:#14181e; --line:#2a3140; --txt:#e8edf5; --muted:#8b95a8; --acc:#7c5cff; --ok:#3dd68c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif; background:radial-gradient(1200px 600px at 10% -10%, #1b1540 0%, transparent 50%), var(--bg); color:var(--txt); }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  h1 { font-size:clamp(28px,5vw,44px); letter-spacing:-.03em; margin:8px 0 8px; }
+  .sub { color:var(--muted); font-size:17px; line-height:1.6; max-width:640px; }
+  .badge { display:inline-block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#cbb8ff; border:1px solid #3d2f7a; background:#1a1433; padding:4px 10px; border-radius:99px; }
+  .grid { display:grid; grid-template-columns:1fr; gap:16px; margin-top:28px; }
+  @media(min-width:800px){ .grid { grid-template-columns: 1fr 1fr; } }
+  label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+  input, textarea, select { width:100%; background:#0e1218; border:1px solid var(--line); color:var(--txt); border-radius:10px; padding:12px 14px; font-size:15px; }
+  textarea { min-height:90px; resize:vertical; }
+  button { background:var(--acc); color:white; border:0; border-radius:12px; padding:14px 18px; font-size:16px; font-weight:600; cursor:pointer; width:100%; }
+  button:hover { filter:brightness(1.08); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  .out h2 { margin:0 0 8px; font-size:22px; }
+  .price { font-size:36px; font-weight:700; color:var(--ok); }
+  .muted { color:var(--muted); }
+  ul { margin:8px 0 0 18px; padding:0; }
+  li { margin:6px 0; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .ghost { background:transparent; border:1px solid var(--line); color:var(--txt); width:auto; padding:10px 14px; font-size:14px; }
+  footer { margin-top:40px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">Project 2B · Asset #1</span>
+    <h1>ForgeOffer</h1>
+    <p class="sub">从零资本起步的第一个工具：把你已经会做的事，压成一份可以收钱的数字产品要约。不需要账号，计算全在浏览器完成。</p>
+
+    <div class="grid">
+      <div class="card">
+        <label>你能给谁省下什么痛？</label>
+        <textarea id="pain" placeholder="例：独立开发者不知道第一个产品该卖多少、文案怎么写"></textarea>
+        <label style="margin-top:12px">你已经具备的能力 / 资料</label>
+        <textarea id="asset" placeholder="例：做过 3 个小产品、懂定价、能写落地页"></textarea>
+        <label style="margin-top:12px">目标客户</label>
+        <input id="who" placeholder="例：中文独立开发者 / 出海制作人" />
+        <label style="margin-top:12px">交付形式</label>
+        <select id="fmt">
+          <option value="pdf">PDF / Notion 模板</option>
+          <option value="pack">提示词 + 模板包</option>
+          <option value="tool">小工具（网页）</option>
+          <option value="service">1 对 1 服务</option>
+        </select>
+        <div style="height:14px"></div>
+        <button id="go">生成要约</button>
+      </div>
+      <div class="card out" id="out">
+        <p class="muted">填左侧后点击生成。输出会包含定价、标题、交付物清单和首条推文。</p>
+      </div>
+    </div>
+
+    <footer>
+      ForgeOffer v0 · 免费工具 · 还不收钱。收款通道尚未接入（需要主体实名账户）。<br/>
+      下一步商品：可下载的《从零到第一单》要约模板包（$29 / ¥199）。
+    </footer>
+  </div>
+<script>
+const fmtMap = {
+  pdf: { name: 'PDF 要约 + 填空表', priceRmb: 99, priceUsd: 19 },
+  pack: { name: '提示词与模板包', priceRmb: 199, priceUsd: 29 },
+  tool: { name: '浏览器小工具', priceRmb: 0, priceUsd: 0, note: '免费拉新，Pro $9/mo' },
+  service: { name: '90 分钟要约打磨', priceRmb: 1999, priceUsd: 299 }
+};
+function pick(fmt){ return fmtMap[fmt] || fmtMap.pack; }
+function gen(){
+  const pain = document.getElementById('pain').value.trim() || '不知道第一个数字产品怎么定价和写文案';
+  const asset = document.getElementById('asset').value.trim() || '已有实践经验与模板';
+  const who = document.getElementById('who').value.trim() || '独立创作者';
+  const fmt = document.getElementById('fmt').value;
+  const p = pick(fmt);
+  const title = who + '的「第一份可售卖要约」';
+  const priceLine = p.priceRmb === 0 ? (免费 + Pro) : ('¥' + p.priceRmb + ' / $' + p.priceUsd);
+  const tweet = '我把「' + pain.slice(0,40) + '」压成一份' + p.name + '，卖 ' + priceLine + '。目标用户：' + who + '。';
+  document.getElementById('out').innerHTML = `
+    <h2>${title}</h2>
+    <div class="price">${priceLine}</div>
+    <p class="muted">交付形式：${p.name}${p.note ? ' · ' + p.note : ''}</p>
+    <p><strong>痛点</strong>：${pain}</p>
+    <p><strong>你的凭什么</strong>：${asset}</p>
+    <p><strong>交付清单</strong></p>
+    <ul>
+      <li>1 页产品要约（标题 / 谁买 / 为什么现在 / 价格）</li>
+      <li>3 条销售文案（X / 小红书 / 小红圈）</li>
+      <li>999 元以下的首单支付清单</li>
+    </ul>
+    <p><strong>首条推文</strong></p>
+    <p>${tweet}</p>
+    <div class="row">
+      <button class="ghost" id="copy">复制要约</button>
+    </div>`;
+  const text = title + '\n' + priceLine + '\n' + tweet;
+  document.getElementById('copy').onclick = () => navigator.clipboard.writeText(text);
+}
+document.getElementById('go').onclick = gen;
+</script>
+</body>
+</html>

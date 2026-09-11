@@ -1,2 +1,6 @@
-# forgeoffer
-Zero-capital offer lab: generate a priced, sellable digital offer in 60 seconds.
+# ForgeOffer
+
+Zero-capital offer generator for solo founders.
+Generate a priced digital offer in 60 seconds. Client-side only.
+
+Project 2B first asset.
